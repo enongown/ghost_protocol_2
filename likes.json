@@ -1,0 +1,64 @@
+{
+    "posts": {
+        "int-001": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "fell-002": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "fell-003": {
+            "likes": [],
+            "dislikes": {
+                "CS23B010": true
+            }
+        },
+        "code-001": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "hack-010": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "hack-006": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "int-003": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "hack-002": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "hack-001": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        },
+        "hack-008": {
+            "likes": {
+                "CS23B010": true
+            },
+            "dislikes": []
+        }
+    }
+}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>createPost: User</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#F2F4FF;--surface:#FFFFFF;--ink:#101736;--muted:#5A6388;--line:#DDE1F3;--tint:#EEF0FF;
+  --primary:#3B4BFF;--on-primary:#FFFFFF;--hero:#3B4BFF;--mark:#FFD84D;--ok:#0E9F77;--bad:#D93B45;
+  --head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"DM Sans","Segoe UI",system-ui,sans-serif;
+  --lift:0 1px 0 var(--line),0 18px 36px -26px rgba(16,23,54,.45);
+}
+@media (prefers-color-scheme:dark){:root{
+  --canvas:#0C1024;--surface:#161B38;--ink:#EAEDFF;--muted:#9AA3CF;--line:#2A3163;--tint:#1E2450;
+  --primary:#8793FF;--on-primary:#0C1024;--hero:#232EB8;--ok:#3DD6A6;--bad:#FF7A82;
+  --lift:0 1px 0 var(--line),0 18px 36px -26px rgba(0,0,0,.7);
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 var(--body)}
+a{color:var(--primary)}
+.wrap{max-width:720px;margin:auto;padding:0 20px}
+
+.hero{background:var(--hero);color:#fff;padding:22px 0 104px}
+.hero nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:44px}
+.brand{font:800 1.1rem var(--head);letter-spacing:-.01em}
+.hero h1{font:800 clamp(2rem,5.2vw,3.4rem)/1.04 var(--head);letter-spacing:-.025em;margin:0 0 14px;max-width:16ch}
+.hero p{margin:0;max-width:52ch;font-size:1.05rem;color:rgba(255,255,255,.88)}
+
+main{margin-top:-64px;padding-bottom:48px;display:flex;flex-direction:column;gap:24px}
+
+.panel{background:var(--surface);border-radius:18px;padding:22px;box-shadow:var(--lift)}
+.panel.form{border-top:6px solid var(--mark)}
+h2{font:800 1.3rem/1.2 var(--head);letter-spacing:-.01em;margin:0 0 4px}
+.sub{margin:0 0 14px;color:var(--muted);font-size:.92rem}
+
+label{display:block;font-weight:700;font-size:.88rem;margin:14px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--canvas);color:var(--ink);font:inherit;font-family:var(--body)}
+textarea{resize:vertical;min-height:90px}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+input[type=file]{padding:8px;border-style:dashed}
+input[type=file]::file-selector-button{margin-right:10px;border:0;border-radius:8px;background:var(--tint);color:var(--primary);font:700 .85rem var(--body);padding:7px 12px;cursor:pointer}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.meta{color:var(--muted);font-size:.85rem;font-weight:400}
+label .meta{font-weight:400}
+.btn{display:inline-block;background:var(--primary);color:var(--on-primary);border:0;border-radius:10px;padding:11px 20px;font:700 1rem var(--body);cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.block{width:100%;margin-top:20px;padding:13px}
+
+.item{border-top:1px solid var(--line);padding:14px 0 2px}
+.item:first-of-type{border-top:0;padding-top:4px}
+.item h3{font:800 1rem var(--head);margin:0 0 2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--canvas);border:1px solid var(--line);border-radius:8px;padding:2px 10px;font-size:.8rem}
+.st{font-weight:700;font-size:.9rem;margin:8px 0 10px}
+.st.pending{color:#B07900}.st.approved{color:var(--ok)}.st.rejected{color:var(--bad)}
+@media (prefers-color-scheme:dark){.st.pending{color:var(--mark)}}
+.empty{color:var(--muted);margin:6px 0 4px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--canvas);padding:11px 20px;border-radius:12px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <nav>
+      <span class="brand">createPost</span>
+    </nav>
+    <h1>Create your post</h1>
+    <p>Tell us who you are and what you're looking for. A moderator will review your post.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel form">
+    <h2>Create your post</h2>
+    <p class="sub">It takes a minute. Add a file if you want to share a resume or portfolio.</p>
+    <form id="userForm">
+      <div class="two">
+        <div>
+          <label for="branch">Branch</label>
+          <select id="branch" required>
+            <option value="">Select</option>
+            <option>CSE</option><option>ECE</option><option>EEE</option>
+            <option>IT</option><option>AI &amp; DS</option><option>Mechanical</option><option>Civil</option><option>Design</option><option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="year">Year</label>
+          <select id="year" required>
+            <option value="">Select</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+      </div>
+      <label for="type">Looking for</label>
+      <select id="type" required>
+        <option>Hackathon</option><option>Internship</option><option>Scholarship</option>
+        <option>Research</option><option>Coding Contest</option><option>Workshop</option>
+        <option>Fellowship</option><option>Competition</option>
+      </select>
+      <label for="desc">Description <span class="meta">(short intro or what you're looking for)</span></label>
+      <textarea id="desc" rows="4" maxlength="1000" placeholder="First-year CSE student exploring machine learning basics, looking for beginner-friendly ML projects." required></textarea>
+      <label for="skill">Skills <span class="meta">(comma separated)</span></label>
+      <input id="skill" placeholder="Python, UI design, public speaking" required>
+      <label for="interest">Interest</label>
+      <input id="interest" placeholder="Machine learning, sports, events" required>
+      <label for="link">Registration / apply link <span class="meta">(optional, https://…)</span></label>
+      <input id="link" type="url" placeholder="https://example.com/apply">
+      <label for="file">Attachment <span class="meta">(PDF, DOC, PNG or JPG, up to 5 MB)</span></label>
+      <input id="file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+      <button class="btn block" type="submit">Submit post</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Your post</h2>
+    <div id="mySubs"></div>
+  </section>
+</main>
+
+<div id="toast" role="status"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const chips = (a, cls = "") => a.map(x => `<span class="chip ${cls}">${esc(x)}</span>`).join("");
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const fileLink = f => f ? `<div class="meta"><a href="${esc(f.path)}" target="_blank" rel="noopener">${esc(f.name)}</a></div>` : "";
+const toast = m => { const t = $("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2400); };
+const safeUrl = u => /^https?:\/\//.test(u) ? u : "#";
+const BIG = 5 * 1024 * 1024;
+
+let db = { subs: [], posts: [], mod: "" };
+
+async function api(action, data = {}, file) {
+  const fd = new FormData();
+  fd.append("action", action);
+  for (const k in data) fd.append(k, data[k]);
+  if (file) fd.append("file", file);
+  let r, j;
+  try { r = await fetch("api.php", { method: "POST", body: fd }); j = await r.json(); }
+  catch (e) { throw new Error("Cannot reach api.php. Open this page through a PHP server."); }
+  if (!r.ok) throw new Error(j.error || "Request failed");
+  return j;
+}
+
+async function refresh() {
+  try { const r = await fetch("api.php?action=list"); db = await r.json(); render(); }
+  catch (e) { toast("Cannot reach api.php. Open this page through a PHP server."); }
+}
+
+const getMe = () => { try { return Number(localStorage.getItem("createPostMe")); } catch (e) { return 0; } };
+
+$("userForm").onsubmit = async e => {
+  e.preventDefault();
+  const f = $("file").files[0];
+  if (f && f.size > BIG) return toast("The file is larger than 5 MB.");
+  try {
+    const r = await api("add_sub", {
+      branch: $("branch").value,
+      year: $("year").value,
+      type: $("type").value,
+      description: $("desc").value,
+      skill: $("skill").value,
+      interest: $("interest").value,
+      link: $("link").value
+    }, f);
+    try { localStorage.setItem("createPostMe", r.id); } catch (x) {}
+    e.target.reset();
+    await refresh();
+    toast("Post sent for review");
+  } catch (err) { toast(err.message); }
+};
+
+function render() {
+  const me = db.subs.find(x => x.id === getMe());
+  $("mySubs").innerHTML = me ? `
+    <div class="item">
+      <h3>${esc(me.branch)} · Year ${esc(me.year)}</h3>
+      <div class="meta">Looking for: ${esc(me.type || "Hackathon")} · Interest: ${esc(me.interest)}</div>
+      ${me.description ? `<div class="meta" style="margin-top:6px">${esc(me.description)}</div>` : ""}
+      ${me.link ? `<div class="meta">Link: <a href="${esc(safeUrl(me.link))}" target="_blank" rel="noopener">${esc(me.link)}</a></div>` : ""}
+      <div class="chips">${chips(me.skills)}</div>${fileLink(me.file)}
+      <div class="st ${me.status}">${cap(me.status)}${me.status === "pending" ? ": waiting for the moderator" : ""}</div>
+    </div>` : '<p class="empty">You have not posted yet.</p>';
+}
+
+refresh();
+setInterval(refresh, 10000);
+</script>
+</body>
+</html>
